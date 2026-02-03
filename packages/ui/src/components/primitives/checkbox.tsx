@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Icon } from '@/components/primitives/icon';
-import { cn } from '@/lib/utils';
+import { Icon } from './icon';
+import { cn } from '../../lib/utils';
 import * as CheckboxPrimitive from '@rn-primitives/checkbox';
 import { Check } from 'lucide-react-native';
 import { Platform } from 'react-native';

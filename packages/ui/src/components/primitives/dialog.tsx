@@ -1,6 +1,6 @@
-import { Icon } from '@/components/primitives/icon';
-import { NativeOnlyAnimatedView } from '@/components/primitives/native-only-animated-view';
-import { cn } from '@/lib/utils';
+import { Icon } from './icon';
+import { NativeOnlyAnimatedView } from './native-only-animated-view';
+import { cn } from '../../lib/utils';
 import * as DialogPrimitive from '@rn-primitives/dialog';
 import { X } from 'lucide-react-native';
 import * as React from 'react';

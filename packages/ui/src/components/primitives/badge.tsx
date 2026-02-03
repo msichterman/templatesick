@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { TextClassContext } from '@/components/primitives/text';
-import { cn } from '@/lib/utils';
+import { TextClassContext } from './text';
+import { cn } from '../../lib/utils';
 import * as Slot from '@rn-primitives/slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Platform, View, ViewProps } from 'react-native';
