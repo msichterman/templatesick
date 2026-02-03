@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
+  serverExternalPackages: ["uniwind"],
   transpilePackages: [
     "@repo/ui",
     "react-native",
@@ -18,7 +19,7 @@ module.exports = {
     "@rn-primitives/types",
     "lucide-react-native",
   ],
-  webpack: (config) => {
+  webpack: (config, { webpack, dev }) => {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       "react-native$": "react-native-web",
@@ -30,6 +31,11 @@ module.exports = {
       ".web.tsx",
       ...config.resolve.extensions,
     ];
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        __DEV__: dev,
+      })
+    );
     return config;
   },
 };

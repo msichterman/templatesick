@@ -2,15 +2,30 @@
   "name": "@repo/ui",
   "version": "0.0.0",
   "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "react-native": "./src/index.tsx",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist"
   },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0"
+  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "react-native": "^0.81.0",
     "tsup": "^8.0.1",
     "typescript": "5.8.3"
   },
@@ -26,8 +41,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react-native": "^0.563.0",
-    "react": "19.0.0",
-    "react-native": "0.81.0",
     "react-native-reanimated": "~3.17.0",
     "react-native-screens": "~4.10.0",
     "tailwind-merge": "^3.4.0",

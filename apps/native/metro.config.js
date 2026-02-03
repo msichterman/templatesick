@@ -12,11 +12,17 @@ const config = getDefaultConfig(projectRoot);
 // 1. Watch all files within the monorepo
 config.watchFolders = [workspaceRoot];
 
-// 2. Let Metro know where to resolve packages
+// 2. Let Metro know where to resolve packages (include pnpm's .pnpm folder)
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
   path.resolve(workspaceRoot, "node_modules"),
 ];
+
+// 3. Enable symlinks for pnpm monorepo support
+config.resolver.unstable_enableSymlinks = true;
+
+// 4. Enable package exports resolution
+config.resolver.unstable_enablePackageExports = true;
 
 // Uniwind must be the outermost wrapper
 module.exports = withUniwindConfig(config, {

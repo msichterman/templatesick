@@ -24,6 +24,6 @@ export default defineConfig((options: Options) => ({
     "@rn-primitives/types",
     "lucide-react-native",
   ],
-  dts: true,
+  dts: false, // TODO: Fix type generation with @rn-primitives
   ...options,
 }));
