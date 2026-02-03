@@ -1,33 +1,44 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Button } from "@repo/ui";
+import { Authenticated, Unauthenticated, AuthLoading, useConvexAuth } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { SignIn } from "../components/SignIn";
+import { Text, Button } from "@repo/ui";
 
 export default function Native() {
+  const { isLoading, isAuthenticated } = useConvexAuth();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Native</Text>
-      <Button
-        onClick={() => {
-          console.log("Pressed!");
-          alert("Pressed!");
-        }}
-        text="Boop"
-      />
+    <View className="flex-1 bg-background items-center justify-center p-4">
+      <AuthLoading>
+        <Text variant="muted">Loading...</Text>
+      </AuthLoading>
+
+      <Unauthenticated>
+        <SignIn />
+      </Unauthenticated>
+
+      <Authenticated>
+        <AuthenticatedContent />
+      </Authenticated>
+
       <StatusBar style="auto" />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  header: {
-    fontWeight: "bold",
-    marginBottom: 20,
-    fontSize: 36,
-  },
-});
+function AuthenticatedContent() {
+  const { signOut } = useAuthActions();
+
+  return (
+    <View className="items-center gap-6">
+      <Text variant="h1">Welcome!</Text>
+      <Text variant="muted" className="text-center">
+        You are now signed in to the app.
+      </Text>
+      <Button variant="destructive" onPress={() => signOut()}>
+        <Text className="text-white font-semibold">Sign Out</Text>
+      </Button>
+    </View>
+  );
+}
