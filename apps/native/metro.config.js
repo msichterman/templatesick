@@ -21,8 +21,15 @@ config.resolver.nodeModulesPaths = [
 // 3. Enable symlinks for pnpm monorepo support
 config.resolver.unstable_enableSymlinks = true;
 
-// 4. Enable package exports resolution
+// 4. Enable package exports with react-native condition
 config.resolver.unstable_enablePackageExports = true;
+// Ensure react-native condition is checked before import/require
+config.resolver.unstable_conditionNames = ['react-native', 'import', 'require'];
+
+// Exclude @repo/ui dist folder from being resolved - always use source
+config.resolver.blockList = [
+  /packages\/ui\/dist\/.*/,
+];
 
 // Uniwind must be the outermost wrapper
 module.exports = withUniwindConfig(config, {

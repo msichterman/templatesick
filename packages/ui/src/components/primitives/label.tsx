@@ -3,6 +3,12 @@ import { cn } from '../../lib/utils';
 import * as LabelPrimitive from '@rn-primitives/label';
 import { Platform } from 'react-native';
 
+// Cast to include className support from uniwind
+const Root = LabelPrimitive.Root as React.ComponentType<LabelPrimitive.RootProps & { className?: string }>;
+const LabelText = LabelPrimitive.Text as React.ComponentType<LabelPrimitive.TextProps & { className?: string }>;
+
+type LabelProps = LabelPrimitive.TextProps & React.RefAttributes<LabelPrimitive.TextRef> & { className?: string };
+
 function Label({
   className,
   onPress,
@@ -11,9 +17,9 @@ function Label({
   onPressOut,
   disabled,
   ...props
-}: LabelPrimitive.TextProps & React.RefAttributes<LabelPrimitive.TextRef>) {
+}: LabelProps) {
   return (
-    <LabelPrimitive.Root
+    <Root
       className={cn(
         'flex select-none flex-row items-center gap-2',
         Platform.select({
@@ -26,7 +32,7 @@ function Label({
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       disabled={disabled}>
-      <LabelPrimitive.Text
+      <LabelText
         className={cn(
           'text-foreground text-sm font-medium',
           Platform.select({ web: 'leading-none' }),
@@ -34,7 +40,7 @@ function Label({
         )}
         {...props}
       />
-    </LabelPrimitive.Root>
+    </Root>
   );
 }
 

@@ -12,10 +12,16 @@ import {
   Text,
   type TextProps,
   View,
+  type ViewProps,
   type ViewStyle,
 } from 'react-native';
-import { FadeIn } from 'react-native-reanimated';
+// Note: Reanimated imports removed due to Expo Go compatibility issues
+// Animations will be disabled until a development build is used
+const FadeIn = undefined;
 import { FullWindowOverlay as RNFullWindowOverlay } from 'react-native-screens';
+
+// Using dropdown menu primitive components directly - uniwind adds className support at runtime
+const { SubTrigger, SubContent, Overlay, Content, Item, CheckboxItem, RadioItem, Label, Separator } = DropdownMenuPrimitive;
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -29,18 +35,21 @@ const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
+type DropdownMenuSubTriggerProps = DropdownMenuPrimitive.SubTriggerProps &
+  React.RefAttributes<DropdownMenuPrimitive.SubTriggerRef> & {
+    className?: string;
+    children?: React.ReactNode;
+    iconClassName?: string;
+    inset?: boolean;
+  };
+
 function DropdownMenuSubTrigger({
   className,
   inset,
   children,
   iconClassName,
   ...props
-}: DropdownMenuPrimitive.SubTriggerProps &
-  React.RefAttributes<DropdownMenuPrimitive.SubTriggerRef> & {
-    children?: React.ReactNode;
-    iconClassName?: string;
-    inset?: boolean;
-  }) {
+}: DropdownMenuSubTriggerProps) {
   const { open } = DropdownMenuPrimitive.useSubContext();
   const icon = Platform.OS === 'web' ? ChevronRight : open ? ChevronUp : ChevronDown;
   return (
@@ -49,7 +58,8 @@ function DropdownMenuSubTrigger({
         'text-sm select-none group-active:text-accent-foreground',
         open && 'text-accent-foreground'
       )}>
-      <DropdownMenuPrimitive.SubTrigger
+      {/* @ts-expect-error - React types mismatch between packages */}
+      <SubTrigger
         className={cn(
           'active:bg-accent group flex flex-row items-center rounded-sm px-2 py-2 sm:py-1.5',
           Platform.select({
@@ -61,19 +71,19 @@ function DropdownMenuSubTrigger({
         {...props}>
         <>{children}</>
         <Icon as={icon} className={cn('text-foreground ml-auto size-4 shrink-0', iconClassName)} />
-      </DropdownMenuPrimitive.SubTrigger>
+      </SubTrigger>
     </TextClassContext.Provider>
   );
 }
 
-function DropdownMenuSubContent({
-  className,
-  ...props
-}: DropdownMenuPrimitive.SubContentProps &
-  React.RefAttributes<DropdownMenuPrimitive.SubContentRef>) {
+type DropdownMenuSubContentProps = DropdownMenuPrimitive.SubContentProps &
+  React.RefAttributes<DropdownMenuPrimitive.SubContentRef> & { className?: string };
+
+function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentProps) {
   return (
     <NativeOnlyAnimatedView entering={FadeIn}>
-      <DropdownMenuPrimitive.SubContent
+      {/* @ts-expect-error - React types mismatch between packages */}
+      <SubContent
         className={cn(
           'bg-popover border-border overflow-hidden rounded-md border p-1 shadow-lg shadow-black/5',
           Platform.select({
@@ -87,7 +97,18 @@ function DropdownMenuSubContent({
   );
 }
 
-const FullWindowOverlay = Platform.OS === 'ios' ? RNFullWindowOverlay : React.Fragment;
+// FullWindowOverlay computed inside component to avoid module-scope Platform access
+function getFullWindowOverlay() {
+  return Platform.OS === 'ios' ? RNFullWindowOverlay : React.Fragment;
+}
+
+type DropdownMenuContentProps = DropdownMenuPrimitive.ContentProps &
+  React.RefAttributes<DropdownMenuPrimitive.ContentRef> & {
+    className?: string;
+    overlayStyle?: StyleProp<ViewStyle>;
+    overlayClassName?: string;
+    portalHost?: string;
+  };
 
 function DropdownMenuContent({
   className,
@@ -95,16 +116,12 @@ function DropdownMenuContent({
   overlayStyle,
   portalHost,
   ...props
-}: DropdownMenuPrimitive.ContentProps &
-  React.RefAttributes<DropdownMenuPrimitive.ContentRef> & {
-    overlayStyle?: StyleProp<ViewStyle>;
-    overlayClassName?: string;
-    portalHost?: string;
-  }) {
+}: DropdownMenuContentProps) {
+  const FullWindowOverlay = getFullWindowOverlay();
   return (
     <DropdownMenuPrimitive.Portal hostName={portalHost}>
       <FullWindowOverlay>
-        <DropdownMenuPrimitive.Overlay
+        <Overlay
           style={Platform.select({
             web: overlayStyle ?? undefined,
             native: overlayStyle
@@ -117,7 +134,8 @@ function DropdownMenuContent({
           className={overlayClassName}>
           <NativeOnlyAnimatedView entering={FadeIn}>
             <TextClassContext.Provider value="text-popover-foreground">
-              <DropdownMenuPrimitive.Content
+              {/* @ts-expect-error - React types mismatch between packages */}
+              <Content
                 className={cn(
                   'bg-popover border-border min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-lg shadow-black/5',
                   Platform.select({
@@ -133,30 +151,28 @@ function DropdownMenuContent({
               />
             </TextClassContext.Provider>
           </NativeOnlyAnimatedView>
-        </DropdownMenuPrimitive.Overlay>
+        </Overlay>
       </FullWindowOverlay>
     </DropdownMenuPrimitive.Portal>
   );
 }
 
-function DropdownMenuItem({
-  className,
-  inset,
-  variant,
-  ...props
-}: DropdownMenuPrimitive.ItemProps &
+type DropdownMenuItemProps = DropdownMenuPrimitive.ItemProps &
   React.RefAttributes<DropdownMenuPrimitive.ItemRef> & {
     className?: string;
     inset?: boolean;
     variant?: 'default' | 'destructive';
-  }) {
+  };
+
+function DropdownMenuItem({ className, inset, variant, ...props }: DropdownMenuItemProps) {
   return (
     <TextClassContext.Provider
       value={cn(
         'select-none text-sm text-popover-foreground group-active:text-popover-foreground',
         variant === 'destructive' && 'text-destructive group-active:text-destructive'
       )}>
-      <DropdownMenuPrimitive.Item
+      {/* @ts-expect-error - React types mismatch between packages */}
+      <Item
         className={cn(
           'active:bg-accent group relative flex flex-row items-center gap-2 rounded-sm px-2 py-2 sm:py-1.5',
           Platform.select({
@@ -176,17 +192,17 @@ function DropdownMenuItem({
   );
 }
 
-function DropdownMenuCheckboxItem({
-  className,
-  children,
-  ...props
-}: DropdownMenuPrimitive.CheckboxItemProps &
+type DropdownMenuCheckboxItemProps = DropdownMenuPrimitive.CheckboxItemProps &
   React.RefAttributes<DropdownMenuPrimitive.CheckboxItemRef> & {
+    className?: string;
     children?: React.ReactNode;
-  }) {
+  };
+
+function DropdownMenuCheckboxItem({ className, children, ...props }: DropdownMenuCheckboxItemProps) {
   return (
     <TextClassContext.Provider value="text-sm text-popover-foreground select-none group-active:text-accent-foreground">
-      <DropdownMenuPrimitive.CheckboxItem
+      {/* @ts-expect-error - React types mismatch between packages */}
+      <CheckboxItem
         className={cn(
           'active:bg-accent group relative flex flex-row items-center gap-2 rounded-sm py-2 pl-8 pr-2 sm:py-1.5',
           Platform.select({
@@ -208,22 +224,22 @@ function DropdownMenuCheckboxItem({
           </DropdownMenuPrimitive.ItemIndicator>
         </View>
         <>{children}</>
-      </DropdownMenuPrimitive.CheckboxItem>
+      </CheckboxItem>
     </TextClassContext.Provider>
   );
 }
 
-function DropdownMenuRadioItem({
-  className,
-  children,
-  ...props
-}: DropdownMenuPrimitive.RadioItemProps &
+type DropdownMenuRadioItemProps = DropdownMenuPrimitive.RadioItemProps &
   React.RefAttributes<DropdownMenuPrimitive.RadioItemRef> & {
+    className?: string;
     children?: React.ReactNode;
-  }) {
+  };
+
+function DropdownMenuRadioItem({ className, children, ...props }: DropdownMenuRadioItemProps) {
   return (
     <TextClassContext.Provider value="text-sm text-popover-foreground select-none group-active:text-accent-foreground">
-      <DropdownMenuPrimitive.RadioItem
+      {/* @ts-expect-error - React types mismatch between packages */}
+      <RadioItem
         className={cn(
           'active:bg-accent group relative flex flex-row items-center gap-2 rounded-sm py-2 pl-8 pr-2 sm:py-1.5',
           Platform.select({
@@ -239,22 +255,21 @@ function DropdownMenuRadioItem({
           </DropdownMenuPrimitive.ItemIndicator>
         </View>
         <>{children}</>
-      </DropdownMenuPrimitive.RadioItem>
+      </RadioItem>
     </TextClassContext.Provider>
   );
 }
 
-function DropdownMenuLabel({
-  className,
-  inset,
-  ...props
-}: DropdownMenuPrimitive.LabelProps &
+type DropdownMenuLabelProps = DropdownMenuPrimitive.LabelProps &
   React.RefAttributes<DropdownMenuPrimitive.LabelRef> & {
     className?: string;
     inset?: boolean;
-  }) {
+  };
+
+function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps) {
   return (
-    <DropdownMenuPrimitive.Label
+    // @ts-expect-error - React types mismatch between packages
+    <Label
       className={cn(
         'text-foreground px-2 py-2 text-sm font-medium sm:py-1.5',
         inset && 'pl-8',
@@ -265,20 +280,24 @@ function DropdownMenuLabel({
   );
 }
 
-function DropdownMenuSeparator({
-  className,
-  ...props
-}: DropdownMenuPrimitive.SeparatorProps & React.RefAttributes<DropdownMenuPrimitive.SeparatorRef>) {
+type DropdownMenuSeparatorProps = DropdownMenuPrimitive.SeparatorProps &
+  React.RefAttributes<DropdownMenuPrimitive.SeparatorRef> & { className?: string };
+
+function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps) {
   return (
-    <DropdownMenuPrimitive.Separator
+    // @ts-expect-error - React types mismatch between packages
+    <Separator
       className={cn('bg-border -mx-1 my-1 h-px', className)}
       {...props}
     />
   );
 }
 
-function DropdownMenuShortcut({ className, ...props }: TextProps & React.RefAttributes<Text>) {
+type DropdownMenuShortcutProps = TextProps & React.RefAttributes<typeof Text> & { className?: string };
+
+function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps) {
   return (
+    // @ts-expect-error - React types mismatch between packages
     <Text
       className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
       {...props}

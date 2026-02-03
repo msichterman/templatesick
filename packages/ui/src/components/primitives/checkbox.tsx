@@ -7,20 +7,27 @@ import { Platform } from 'react-native';
 
 const DEFAULT_HIT_SLOP = 24;
 
+// Cast to include className support from uniwind
+const Root = CheckboxPrimitive.Root as React.ComponentType<CheckboxPrimitive.RootProps & { className?: string }>;
+const Indicator = CheckboxPrimitive.Indicator as React.ComponentType<CheckboxPrimitive.IndicatorProps & { className?: string }>;
+
+type CheckboxProps = CheckboxPrimitive.RootProps &
+  React.RefAttributes<CheckboxPrimitive.RootRef> & {
+    className?: string;
+    checkedClassName?: string;
+    indicatorClassName?: string;
+    iconClassName?: string;
+  };
+
 function Checkbox({
   className,
   checkedClassName,
   indicatorClassName,
   iconClassName,
   ...props
-}: CheckboxPrimitive.RootProps &
-  React.RefAttributes<CheckboxPrimitive.RootRef> & {
-    checkedClassName?: string;
-    indicatorClassName?: string;
-    iconClassName?: string;
-  }) {
+}: CheckboxProps) {
   return (
-    <CheckboxPrimitive.Root
+    <Root
       className={cn(
         'border-input dark:bg-input/30 size-4 shrink-0 rounded-[4px] border shadow-sm shadow-black/5',
         Platform.select({
@@ -33,7 +40,7 @@ function Checkbox({
       )}
       hitSlop={DEFAULT_HIT_SLOP}
       {...props}>
-      <CheckboxPrimitive.Indicator
+      <Indicator
         className={cn('bg-primary h-full w-full items-center justify-center', indicatorClassName)}>
         <Icon
           as={Check}
@@ -41,8 +48,8 @@ function Checkbox({
           strokeWidth={Platform.OS === 'web' ? 2.5 : 3.5}
           className={cn('text-primary-foreground', iconClassName)}
         />
-      </CheckboxPrimitive.Indicator>
-    </CheckboxPrimitive.Root>
+      </Indicator>
+    </Root>
   );
 }
 

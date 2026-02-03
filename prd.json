@@ -1,0 +1,651 @@
+{
+  "name": "Filesick",
+  "version": "1.0.0",
+  "tagline": "Fast, minimal file uploads powered by Cloudflare R2",
+  "description": "A cross-platform file upload and sharing app built with Expo that connects to Cloudflare R2 storage using R2 Local Uploads for maximum speed (up to 75% faster uploads). Users bring their own R2 bucket (BYOB) and can upload, organize, and share files across iOS, Android, Web, and macOS.",
+
+  "decisions": {
+    "macosStrategy": "Expo + Electron (same codebase)",
+    "authentication": "Required via Convex Auth for cross-device sync",
+    "filePrivacy": "User preference in settings (public/private default)",
+    "storageModel": "BYOB - Bring Your Own Bucket (users provide R2 credentials)"
+  },
+
+  "currentState": {
+    "implemented": {
+      "convexBackend": {
+        "status": "working",
+        "deployment": "avid-panda-171.convex.cloud",
+        "features": [
+          "Password authentication",
+          "Google OAuth",
+          "Auth tables in schema"
+        ]
+      },
+      "nativeApp": {
+        "status": "working",
+        "features": [
+          "ConvexProvider with SecureStore",
+          "SignIn component with @repo/ui",
+          "Authenticated/Unauthenticated routing"
+        ],
+        "stack": {
+          "expo": "54.0.0",
+          "react": "19.0.0",
+          "reactNative": "0.81.0",
+          "expoRouter": "5.0.0"
+        }
+      },
+      "uiComponents": {
+        "status": "working",
+        "count": 13,
+        "components": [
+          "Button",
+          "Card",
+          "CardHeader",
+          "CardTitle",
+          "CardDescription",
+          "CardContent",
+          "CardFooter",
+          "Input",
+          "Text",
+          "Label",
+          "Avatar",
+          "Badge",
+          "Checkbox",
+          "Dialog",
+          "DropdownMenu",
+          "Select",
+          "Icon"
+        ],
+        "styling": "Uniwind + Tailwind CSS v4 with light/dark mode"
+      }
+    },
+    "toBuild": [
+      "Convex schema extension (settings, files, folders)",
+      "R2 presigned URL HTTP actions",
+      "Tab-based app navigation",
+      "Settings screen with R2 credentials",
+      "File upload with progress tracking",
+      "File management (copy, download, delete)",
+      "Folder organization",
+      "New UI components (FileRow, DropZone, ProgressBar)"
+    ]
+  },
+
+  "architecture": {
+    "overview": "Expo App → Convex HTTP Actions → Cloudflare R2 (Local Uploads)",
+    "dataFlow": [
+      "1. Client requests presigned URL from Convex (authenticated)",
+      "2. Convex fetches user's R2 credentials, generates presigned URL",
+      "3. Client uploads directly to R2 via presigned URL (nearest edge)",
+      "4. Client saves file metadata to Convex",
+      "5. UI updates with new file in list"
+    ],
+    "packages": {
+      "apps/native": "Expo app (iOS, Android, Web, macOS/Electron)",
+      "apps/web": "Next.js web app (future)",
+      "packages/backend": "Convex backend (@repo/backend)",
+      "packages/ui": "Shared UI components (@repo/ui)"
+    }
+  },
+
+  "techStack": {
+    "frontend": {
+      "framework": "Expo SDK 54",
+      "language": "TypeScript",
+      "navigation": "Expo Router 5",
+      "styling": "Uniwind + Tailwind CSS v4",
+      "stateManagement": "Convex React hooks"
+    },
+    "backend": {
+      "platform": "Convex",
+      "auth": "Convex Auth (Password + Google OAuth)",
+      "database": "Convex (document store)",
+      "httpActions": "Convex HTTP Actions"
+    },
+    "storage": {
+      "provider": "Cloudflare R2",
+      "feature": "R2 Local Uploads (75% faster)",
+      "access": "Presigned URLs (S3-compatible API)"
+    },
+    "desktop": {
+      "framework": "Electron (via Expo)",
+      "platform": "macOS"
+    }
+  },
+
+  "database": {
+    "tables": {
+      "authTables": {
+        "status": "implemented",
+        "source": "@convex-dev/auth/server",
+        "description": "User authentication tables"
+      },
+      "settings": {
+        "status": "toBuild",
+        "description": "User R2 configuration",
+        "fields": {
+          "userId": "Id<'users'>",
+          "accessKeyId": "string",
+          "encryptedSecretAccessKey": "string (AES-256-GCM)",
+          "bucketName": "string",
+          "accountId": "string",
+          "customDomain": "string | undefined",
+          "defaultPrivacy": "'public' | 'private'",
+          "createdAt": "number",
+          "updatedAt": "number"
+        },
+        "indexes": ["by_userId"]
+      },
+      "files": {
+        "status": "toBuild",
+        "description": "File metadata (actual files in R2)",
+        "fields": {
+          "userId": "Id<'users'>",
+          "name": "string",
+          "size": "number (bytes)",
+          "mimeType": "string",
+          "r2Key": "string",
+          "publicUrl": "string | undefined",
+          "folderId": "Id<'folders'> | undefined",
+          "isPublic": "boolean",
+          "uploadedAt": "number"
+        },
+        "indexes": ["by_userId", "by_userId_folderId", "by_userId_uploadedAt"]
+      },
+      "folders": {
+        "status": "toBuild",
+        "description": "Folder organization",
+        "fields": {
+          "userId": "Id<'users'>",
+          "name": "string",
+          "parentFolderId": "Id<'folders'> | undefined",
+          "createdAt": "number"
+        },
+        "indexes": ["by_userId", "by_userId_parentFolderId"]
+      }
+    }
+  },
+
+  "api": {
+    "mutations": {
+      "settings": [
+        {
+          "name": "saveSettings",
+          "args": ["accessKeyId", "secretAccessKey", "bucketName", "accountId", "customDomain?", "defaultPrivacy"],
+          "description": "Save or update R2 credentials"
+        },
+        {
+          "name": "deleteSettings",
+          "args": [],
+          "description": "Remove R2 configuration"
+        }
+      ],
+      "files": [
+        {
+          "name": "saveFile",
+          "args": ["name", "size", "mimeType", "r2Key", "publicUrl?", "folderId?", "isPublic?"],
+          "description": "Save file metadata after upload"
+        },
+        {
+          "name": "deleteFile",
+          "args": ["fileId"],
+          "description": "Delete file metadata"
+        },
+        {
+          "name": "updateFilePrivacy",
+          "args": ["fileId", "isPublic"],
+          "description": "Toggle file public/private"
+        },
+        {
+          "name": "moveFile",
+          "args": ["fileId", "folderId?"],
+          "description": "Move file to folder or root"
+        }
+      ],
+      "folders": [
+        {
+          "name": "createFolder",
+          "args": ["name", "parentFolderId?"],
+          "description": "Create new folder"
+        },
+        {
+          "name": "deleteFolder",
+          "args": ["folderId", "deleteContents?"],
+          "description": "Delete folder"
+        },
+        {
+          "name": "renameFolder",
+          "args": ["folderId", "name"],
+          "description": "Rename folder"
+        }
+      ]
+    },
+    "queries": {
+      "settings": [
+        {
+          "name": "getSettings",
+          "args": [],
+          "description": "Get user settings (without secret)"
+        }
+      ],
+      "files": [
+        {
+          "name": "getFiles",
+          "args": ["folderId?"],
+          "description": "Get files in folder or root"
+        },
+        {
+          "name": "getRecentFiles",
+          "args": ["limit?"],
+          "description": "Get recent uploads"
+        },
+        {
+          "name": "getFile",
+          "args": ["fileId"],
+          "description": "Get single file details"
+        }
+      ],
+      "folders": [
+        {
+          "name": "getFolders",
+          "args": ["parentFolderId?"],
+          "description": "Get folders in parent or root"
+        },
+        {
+          "name": "getAllFolders",
+          "args": [],
+          "description": "Get all user folders"
+        }
+      ]
+    },
+    "httpActions": [
+      {
+        "method": "POST",
+        "path": "/upload-url",
+        "args": ["fileName", "mimeType", "size", "folderId?"],
+        "returns": ["uploadUrl", "r2Key", "publicUrl"],
+        "description": "Generate presigned upload URL"
+      },
+      {
+        "method": "POST",
+        "path": "/download-url",
+        "args": ["fileId"],
+        "returns": ["url", "expiresAt"],
+        "description": "Generate presigned download URL"
+      },
+      {
+        "method": "POST",
+        "path": "/delete-file",
+        "args": ["r2Key"],
+        "returns": ["success"],
+        "description": "Delete file from R2"
+      }
+    ]
+  },
+
+  "screens": {
+    "navigation": {
+      "type": "tab-based",
+      "tabs": ["Home", "Folders", "Settings"]
+    },
+    "routes": {
+      "(tabs)/index.tsx": {
+        "name": "Home",
+        "description": "Main upload interface with DropZone and Recent Uploads list",
+        "components": ["DropZone", "FileRow", "Badge", "Text"]
+      },
+      "(tabs)/folders.tsx": {
+        "name": "Folders",
+        "description": "Folder browser with create folder action",
+        "components": ["Card", "Text", "Badge", "Button"]
+      },
+      "(tabs)/settings.tsx": {
+        "name": "Settings",
+        "description": "R2 credentials form and preferences",
+        "components": ["Card", "Input", "Button", "Label", "Avatar", "Checkbox"]
+      },
+      "folder/[id].tsx": {
+        "name": "Folder Detail",
+        "description": "Single folder contents view",
+        "components": ["FileRow", "Text", "Button"]
+      },
+      "file/[id].tsx": {
+        "name": "File Actions",
+        "description": "File action modal/sheet",
+        "components": ["Dialog", "Button", "Text"]
+      }
+    }
+  },
+
+  "uiComponentsToBuild": {
+    "FileRow": {
+      "file": "packages/ui/src/components/ui/file-row.tsx",
+      "description": "File list item with thumbnail, name, size, actions",
+      "props": {
+        "filename": "string",
+        "size": "number",
+        "mimeType": "string",
+        "thumbnailUrl": "string | undefined",
+        "isPublic": "boolean",
+        "createdAt": "Date",
+        "onCopy": "() => void",
+        "onDownload": "() => void",
+        "onDelete": "() => void",
+        "onPress": "() => void"
+      }
+    },
+    "DropZone": {
+      "file": "packages/ui/src/components/ui/drop-zone.tsx",
+      "description": "Drag-drop upload area (web) / tap-to-select (mobile)",
+      "props": {
+        "onFilesSelected": "(files: File[]) => void",
+        "accept": "string[] | undefined",
+        "maxSize": "number | undefined",
+        "multiple": "boolean | undefined",
+        "disabled": "boolean | undefined"
+      },
+      "platformBehavior": {
+        "web": "HTML5 drag-drop API + click-to-select",
+        "ios": "Tap opens document picker",
+        "android": "Tap opens document picker",
+        "macos": "NSServices drag-drop + menu bar"
+      }
+    },
+    "ProgressBar": {
+      "file": "packages/ui/src/components/ui/progress-bar.tsx",
+      "description": "Upload progress indicator",
+      "props": {
+        "value": "number (0-100)",
+        "indeterminate": "boolean | undefined",
+        "size": "'sm' | 'default' | 'lg'",
+        "variant": "'default' | 'success' | 'error'",
+        "showLabel": "boolean | undefined"
+      }
+    },
+    "SettingsForm": {
+      "file": "packages/ui/src/components/ui/settings-form.tsx",
+      "description": "Grouped form sections for settings",
+      "exports": ["SettingsForm", "SettingsFormSection", "SettingsFormField"]
+    }
+  },
+
+  "services": {
+    "uploadService": {
+      "file": "apps/native/services/uploadService.ts",
+      "description": "R2 upload with progress tracking via XMLHttpRequest",
+      "methods": [
+        {
+          "name": "uploadFile",
+          "args": ["file", "options?"],
+          "returns": "Promise<{ fileId, key }>",
+          "description": "Upload single file with progress"
+        },
+        {
+          "name": "uploadBatch",
+          "args": ["files", "options?"],
+          "returns": "Promise<{ fileId, key, fileName }[]>",
+          "description": "Upload multiple files with concurrency control"
+        },
+        {
+          "name": "getDownloadUrl",
+          "args": ["fileId"],
+          "returns": "Promise<string>",
+          "description": "Get presigned download URL"
+        }
+      ]
+    }
+  },
+
+  "hooks": {
+    "useUpload": {
+      "file": "apps/native/hooks/useUpload.ts",
+      "description": "Upload state management hook",
+      "returns": {
+        "uploadFile": "function",
+        "uploadBatch": "function",
+        "isUploading": "boolean",
+        "uploads": "UploadProgress[]",
+        "getProgress": "(fileId) => UploadProgress",
+        "clearProgress": "(fileId?) => void"
+      }
+    },
+    "useSettings": {
+      "file": "apps/native/hooks/useSettings.ts",
+      "description": "Settings query hook",
+      "returns": {
+        "settings": "Settings | null",
+        "isLoading": "boolean",
+        "isConfigured": "boolean"
+      }
+    },
+    "useFiles": {
+      "file": "apps/native/hooks/useFiles.ts",
+      "description": "Files list query hook",
+      "returns": {
+        "files": "File[]",
+        "isLoading": "boolean",
+        "refetch": "function"
+      }
+    }
+  },
+
+  "implementationPhases": [
+    {
+      "phase": 1,
+      "name": "Convex Schema & Functions",
+      "tasks": [
+        "Extend schema.ts with settings, files, folders tables",
+        "Create settings.ts mutations/queries",
+        "Create files.ts mutations/queries",
+        "Create folders.ts mutations/queries",
+        "Add lib/encryption.ts for AES-256-GCM",
+        "Run npx convex dev to sync schema"
+      ],
+      "verification": "Dashboard shows new tables, no sync errors"
+    },
+    {
+      "phase": 2,
+      "name": "R2 Integration",
+      "tasks": [
+        "Add aws4fetch dependency",
+        "Create lib/r2.ts for presigned URLs",
+        "Add HTTP endpoints to http.ts",
+        "Test endpoints with curl"
+      ],
+      "verification": "Can generate presigned URL via HTTP action"
+    },
+    {
+      "phase": 3,
+      "name": "App Navigation",
+      "tasks": [
+        "Create (tabs)/_layout.tsx with tab bar",
+        "Move authenticated content to (tabs)/index.tsx",
+        "Create (tabs)/settings.tsx placeholder",
+        "Create (tabs)/folders.tsx placeholder",
+        "Update root _layout.tsx for tab group"
+      ],
+      "verification": "Tab bar shows, navigation works"
+    },
+    {
+      "phase": 4,
+      "name": "Settings Screen",
+      "tasks": [
+        "Create settings form with existing components",
+        "Wire up saveSettings mutation",
+        "Add Test Connection functionality",
+        "Implement settings persistence"
+      ],
+      "verification": "Can save R2 credentials, test connection validates"
+    },
+    {
+      "phase": 5,
+      "name": "New UI Components",
+      "tasks": [
+        "Create ProgressBar component",
+        "Create FileRow component",
+        "Create DropZone component",
+        "Export from packages/ui/src/index.tsx"
+      ],
+      "verification": "Components render correctly in storybook/app"
+    },
+    {
+      "phase": 6,
+      "name": "Upload Flow",
+      "tasks": [
+        "Create uploadService.ts",
+        "Create useUpload hook",
+        "Wire up DropZone to upload service",
+        "Add progress tracking UI",
+        "Implement file list with real data"
+      ],
+      "verification": "Can upload file, see progress, file appears in list"
+    },
+    {
+      "phase": 7,
+      "name": "File Management",
+      "tasks": [
+        "Implement copy URL action",
+        "Implement download action",
+        "Implement delete action",
+        "Implement privacy toggle"
+      ],
+      "verification": "All file actions work correctly"
+    },
+    {
+      "phase": 8,
+      "name": "Folders",
+      "tasks": [
+        "Implement folder creation",
+        "Implement folder navigation",
+        "Implement move file to folder",
+        "Implement folder deletion"
+      ],
+      "verification": "Can create, navigate, and manage folders"
+    }
+  ],
+
+  "files": {
+    "toCreate": {
+      "backend": [
+        "packages/backend/convex/settings.ts",
+        "packages/backend/convex/files.ts",
+        "packages/backend/convex/folders.ts",
+        "packages/backend/convex/lib/encryption.ts",
+        "packages/backend/convex/lib/r2.ts"
+      ],
+      "ui": [
+        "packages/ui/src/components/ui/file-row.tsx",
+        "packages/ui/src/components/ui/drop-zone.tsx",
+        "packages/ui/src/components/ui/progress-bar.tsx",
+        "packages/ui/src/components/ui/settings-form.tsx"
+      ],
+      "native": [
+        "apps/native/app/(tabs)/_layout.tsx",
+        "apps/native/app/(tabs)/index.tsx",
+        "apps/native/app/(tabs)/folders.tsx",
+        "apps/native/app/(tabs)/settings.tsx",
+        "apps/native/app/folder/[id].tsx",
+        "apps/native/app/file/[id].tsx",
+        "apps/native/services/uploadService.ts",
+        "apps/native/hooks/useUpload.ts",
+        "apps/native/hooks/useSettings.ts",
+        "apps/native/hooks/useFiles.ts"
+      ]
+    },
+    "toModify": {
+      "backend": [
+        "packages/backend/convex/schema.ts",
+        "packages/backend/convex/http.ts",
+        "packages/backend/package.json"
+      ],
+      "ui": [
+        "packages/ui/src/index.tsx"
+      ],
+      "native": [
+        "apps/native/app/_layout.tsx",
+        "apps/native/package.json"
+      ]
+    }
+  },
+
+  "dependencies": {
+    "toAdd": {
+      "packages/backend": {
+        "aws4fetch": "^1.0.18"
+      },
+      "apps/native": {
+        "expo-document-picker": "~12.0.2",
+        "expo-file-system": "~18.0.0"
+      }
+    }
+  },
+
+  "environmentVariables": {
+    "existing": [
+      "EXPO_PUBLIC_CONVEX_URL",
+      "CONVEX_DEPLOYMENT"
+    ],
+    "toAdd": [
+      {
+        "name": "ENCRYPTION_KEY",
+        "description": "32-byte hex string for AES-256-GCM encryption of R2 secrets",
+        "setVia": "npx convex env set ENCRYPTION_KEY <value>"
+      }
+    ]
+  },
+
+  "r2Setup": {
+    "userSteps": [
+      "1. Create Cloudflare account (if needed)",
+      "2. Create R2 bucket in Cloudflare dashboard",
+      "3. Enable R2 Local Uploads: npx wrangler r2 bucket local-uploads enable [BUCKET]",
+      "4. Create R2 API token with Object Read & Write permissions",
+      "5. (Optional) Configure custom domain for public access",
+      "6. Enter credentials in Filesick Settings screen"
+    ],
+    "requiredCredentials": [
+      "Account ID (from Cloudflare dashboard URL)",
+      "Access Key ID (from R2 API token)",
+      "Secret Access Key (from R2 API token)",
+      "Bucket Name"
+    ],
+    "optionalConfig": [
+      "Custom Domain (e.g., files.example.com)"
+    ]
+  },
+
+  "securityConsiderations": [
+    "R2 secretAccessKey encrypted with AES-256-GCM before storage",
+    "Encryption key stored as Convex environment variable",
+    "Presigned URLs have 1-hour expiry",
+    "All mutations validate user ownership before modification",
+    "R2 keys namespaced by userId to prevent cross-user access",
+    "Secrets never exposed to client - only server-side HTTP actions"
+  ],
+
+  "platformSpecific": {
+    "ios": {
+      "upload": "expo-document-picker",
+      "storage": "expo-secure-store for auth tokens",
+      "actions": "Bottom sheet for file actions"
+    },
+    "android": {
+      "upload": "expo-document-picker",
+      "storage": "expo-secure-store for auth tokens",
+      "actions": "Bottom sheet for file actions"
+    },
+    "web": {
+      "upload": "HTML5 drag-drop API + file input",
+      "storage": "localStorage for auth tokens",
+      "actions": "Dropdown menu on hover"
+    },
+    "macos": {
+      "upload": "Electron file dialog + drag-drop",
+      "storage": "Keychain via electron-store",
+      "actions": "Context menu + menubar",
+      "extras": "Menubar app mode, keyboard shortcuts"
+    }
+  }
+}

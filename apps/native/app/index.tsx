@@ -8,25 +8,6 @@ import { Text, Button } from "@repo/ui";
 export default function Native() {
   const { isLoading, isAuthenticated } = useConvexAuth();
 
-  // Debug logging
-  console.log("Auth state:", { isLoading, isAuthenticated });
-
-  // Debug: Show all localStorage keys on mount
-  if (typeof window !== "undefined") {
-    console.log("=== PAGE LOAD DEBUG ===");
-    console.log("localStorage.length:", localStorage.length);
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      const value = localStorage.getItem(key!);
-      console.log(`  ${key}: ${value?.substring(0, 50)}...`);
-    }
-    // Check for the specific keys we expect
-    const jwtKey = "__convexAuthJWT_httpsavidpanda171convexcloud";
-    const jwt = localStorage.getItem(jwtKey);
-    console.log(`JWT token present: ${!!jwt}`);
-    console.log("=== END DEBUG ===");
-  }
-
   return (
     <View className="flex-1 bg-background items-center justify-center p-4">
       <AuthLoading>

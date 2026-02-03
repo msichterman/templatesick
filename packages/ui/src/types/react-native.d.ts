@@ -1,12 +1,8 @@
-/// <reference types="uniwind/types" />
+// Type augmentation for React Native components to include className from uniwind
+// These augment the existing react-native types to add className support
 
-declare module 'uniwind' {
-  import { StyleProp, ViewStyle, TextStyle, ImageStyle } from 'react-native';
+import 'react-native';
 
-  export function useResolveClassNames(classNames: string | undefined): StyleProp<ViewStyle | TextStyle | ImageStyle>;
-}
-
-// Augment react-native components to accept className prop (added by uniwind at runtime)
 declare module 'react-native' {
   interface ViewProps {
     className?: string;
@@ -24,6 +20,12 @@ declare module 'react-native' {
     className?: string;
   }
   interface ImageProps {
+    className?: string;
+  }
+  interface TouchableOpacityProps {
+    className?: string;
+  }
+  interface TouchableHighlightProps {
     className?: string;
   }
 }
