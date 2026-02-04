@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import 'uniwind';
 
 /* Include UI package components for class scanning */
 @source "../../../packages/ui/src/**/*.{ts,tsx}";

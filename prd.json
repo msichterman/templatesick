@@ -58,7 +58,7 @@
           "Select",
           "Icon"
         ],
-        "styling": "Uniwind + Tailwind CSS v4 with light/dark mode"
+        "styling": "NativeWind + Tailwind CSS v4 with light/dark mode"
       }
     },
     "toBuild": [
@@ -95,7 +95,7 @@
       "framework": "Expo SDK 54",
       "language": "TypeScript",
       "navigation": "Expo Router 5",
-      "styling": "Uniwind + Tailwind CSS v4",
+      "styling": "NativeWind + Tailwind CSS v4",
       "stateManagement": "Convex React hooks"
     },
     "backend": {

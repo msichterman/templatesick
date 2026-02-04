@@ -1,13 +1,11 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
-    "types": ["uniwind/types"]
+    "plugins": [{ "name": "next" }]
   },
   "include": [
     "next-env.d.ts",
     "react-native.d.ts",
-    "uniwind.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

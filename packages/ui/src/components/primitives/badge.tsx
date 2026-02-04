@@ -5,7 +5,7 @@ import * as Slot from '@rn-primitives/slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { View, ViewProps } from 'react-native';
 
-// Cast to include className support from uniwind
+// Cast to include className support from NativeWind
 type ViewWithClassName = React.ComponentType<ViewProps & { className?: string }>;
 const StyledView = View as ViewWithClassName;
 const StyledSlotView = Slot.View as ViewWithClassName;

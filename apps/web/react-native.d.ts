@@ -1,5 +1,5 @@
-// Type augmentation for React Native components to include className from uniwind/react-native-web
-// This is needed because the web app uses Next.js + PostCSS instead of Metro with withUniwindConfig
+// Type augmentation for React Native components to include className
+// This is needed because the web app uses Next.js + PostCSS instead of Metro with NativeWind
 import 'react-native';
 
 declare module 'react-native' {

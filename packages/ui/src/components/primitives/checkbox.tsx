@@ -7,7 +7,7 @@ import { Platform } from 'react-native';
 
 const DEFAULT_HIT_SLOP = 24;
 
-// Cast to include className support from uniwind
+// Cast to include className support from NativeWind
 const Root = CheckboxPrimitive.Root as React.ComponentType<CheckboxPrimitive.RootProps & { className?: string }>;
 const Indicator = CheckboxPrimitive.Indicator as React.ComponentType<CheckboxPrimitive.IndicatorProps & { className?: string }>;
 

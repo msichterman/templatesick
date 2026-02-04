@@ -1,4 +1,4 @@
-// Type augmentation for React Native components to include className from uniwind
+// Type augmentation for React Native components to include className from NativeWind
 // These augment the existing react-native types to add className support
 
 import 'react-native';

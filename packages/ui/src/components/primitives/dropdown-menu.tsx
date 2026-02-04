@@ -20,7 +20,7 @@ import {
 const FadeIn = undefined;
 import { FullWindowOverlay as RNFullWindowOverlay } from 'react-native-screens';
 
-// Using dropdown menu primitive components directly - uniwind adds className support at runtime
+// Using dropdown menu primitive components directly - NativeWind adds className support at runtime
 const { SubTrigger, SubContent, Overlay, Content, Item, CheckboxItem, RadioItem, Label, Separator } = DropdownMenuPrimitive;
 
 const DropdownMenu = DropdownMenuPrimitive.Root;

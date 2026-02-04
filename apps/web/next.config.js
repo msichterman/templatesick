@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
-  serverExternalPackages: ["uniwind"],
   transpilePackages: [
     "@repo/ui",
     "react-native",

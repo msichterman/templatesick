@@ -11,7 +11,7 @@ const FadeIn = undefined;
 const FadeOut = undefined;
 import { FullWindowOverlay as RNFullWindowOverlay } from 'react-native-screens';
 
-// Using dialog primitive components directly - uniwind adds className support at runtime
+// Using dialog primitive components directly - NativeWind adds className support at runtime
 const { Overlay, Content, Close, Title, Description } = DialogPrimitive;
 
 const Dialog = DialogPrimitive.Root;

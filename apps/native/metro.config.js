@@ -1,6 +1,6 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require("expo/metro-config");
-const { withUniwindConfig } = require("uniwind/metro");
+const { withNativeWind } = require("nativewind/metro");
 const path = require("path");
 
 // Find the workspace root
@@ -31,8 +31,7 @@ config.resolver.blockList = [
   /packages\/ui\/dist\/.*/,
 ];
 
-// Uniwind must be the outermost wrapper
-module.exports = withUniwindConfig(config, {
-  cssEntryFile: './global.css',
-  extraThemes: ['light', 'dark'],
+module.exports = withNativeWind(config, {
+  input: './global.css',
+  inlineVariables: false,
 });

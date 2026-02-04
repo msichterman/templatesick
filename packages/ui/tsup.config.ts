@@ -14,7 +14,6 @@ export default defineConfig((options: Options) => ({
     "react-native",
     "react-native-reanimated",
     "react-native-screens",
-    "uniwind",
     "@rn-primitives/avatar",
     "@rn-primitives/checkbox",
     "@rn-primitives/dialog",

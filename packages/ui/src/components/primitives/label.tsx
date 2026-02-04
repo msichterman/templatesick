@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 import * as LabelPrimitive from '@rn-primitives/label';
 import { Platform } from 'react-native';
 
-// Cast to include className support from uniwind
+// Cast to include className support from NativeWind
 const Root = LabelPrimitive.Root as React.ComponentType<LabelPrimitive.RootProps & { className?: string }>;
 const LabelText = LabelPrimitive.Text as React.ComponentType<LabelPrimitive.TextProps & { className?: string }>;
 

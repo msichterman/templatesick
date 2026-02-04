@@ -18,7 +18,7 @@ const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;
 
-// Using select primitive components directly - uniwind adds className support at runtime
+// Using select primitive components directly - NativeWind adds className support at runtime
 const { Value, Trigger, Content: ContentComp, Viewport, Label: LabelComp, Item: ItemComp, ItemText, Separator: SeparatorComp, ScrollUpButton: ScrollUpBtn, ScrollDownButton: ScrollDownBtn } = SelectPrimitive;
 
 type SelectValueProps = Omit<SelectPrimitive.ValueProps, 'ref'> & { className?: string };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 import * as AvatarPrimitive from '@rn-primitives/avatar';
 
-// Cast to any to work around @rn-primitives types not including uniwind's className prop
+// Cast to any to work around @rn-primitives types not including NativeWind's className prop
 const Root = AvatarPrimitive.Root as React.ComponentType<AvatarPrimitive.RootProps & { className?: string }>;
 const Image = AvatarPrimitive.Image as React.ComponentType<AvatarPrimitive.ImageProps & { className?: string }>;
 const Fallback = AvatarPrimitive.Fallback as React.ComponentType<AvatarPrimitive.FallbackProps & { className?: string }>;

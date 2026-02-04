@@ -9,7 +9,7 @@ type IconProps = LucideProps & {
 /**
  * A wrapper component for Lucide icons.
  *
- * Note: className styling via uniwind was removed due to Metro bundling issues.
+ * Note: className styling via NativeWind was removed due to Metro bundling issues.
  * Use the color prop directly to style icon colors.
  *
  * @component

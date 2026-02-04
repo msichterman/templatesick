@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Converts Tailwind class names to a style object that works with React Native Web.
  * On web, uses the $$css escape hatch to apply CSS classes directly.
- * On native, returns undefined (className is handled by uniwind's Metro config).
+ * On native, returns undefined (className is handled by NativeWind's Metro config).
  */
 export function twStyle(...inputs: ClassValue[]): StyleProp<any> | undefined {
   if (Platform.OS !== 'web') {
