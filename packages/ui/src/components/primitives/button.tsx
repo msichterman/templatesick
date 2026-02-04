@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextClassContext } from './text';
-import { cn, twStyle } from '../../lib/utils';
+import { cn } from '../../lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Pressable, StyleSheet, type PressableProps } from 'react-native';
+import { Pressable, type PressableProps } from 'react-native';
 
 // Note: Platform-specific styles removed to fix iOS bundler issues
 // Web-specific hover/focus styles will need to be handled via CSS media queries
@@ -63,12 +63,11 @@ type ButtonProps = PressableProps &
   VariantProps<typeof buttonVariants> & { className?: string };
 
 function Button({ className, variant, size, style, ...props }: ButtonProps) {
-  const buttonClasses = cn(props.disabled && 'opacity-50', buttonVariants({ variant, size }), className);
   return (
     <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
       <Pressable
-        className={buttonClasses}
-        style={StyleSheet.flatten([twStyle(buttonClasses), style])}
+        className={cn(props.disabled && 'opacity-50', buttonVariants({ variant, size }), className)}
+        style={style}
         role="button"
         {...props}
       />

@@ -3,7 +3,6 @@ import type { LucideIcon, LucideProps } from 'lucide-react-native';
 
 type IconProps = LucideProps & {
   as: LucideIcon;
-  className?: string;
 };
 
 /**
@@ -25,7 +24,7 @@ type IconProps = LucideProps & {
  * @param {number} size - Icon size (defaults to 14).
  * @param {...LucideProps} ...props - Additional Lucide icon props passed to the "as" icon.
  */
-function Icon({ as: IconComponent, className, size = 14, ...props }: IconProps) {
+function Icon({ as: IconComponent, size = 14, ...props }: IconProps) {
   return (
     <IconComponent
       size={size}

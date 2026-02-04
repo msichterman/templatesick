@@ -16,14 +16,12 @@ type CheckboxProps = CheckboxPrimitive.RootProps &
     className?: string;
     checkedClassName?: string;
     indicatorClassName?: string;
-    iconClassName?: string;
   };
 
 function Checkbox({
   className,
   checkedClassName,
   indicatorClassName,
-  iconClassName,
   ...props
 }: CheckboxProps) {
   return (
@@ -46,7 +44,6 @@ function Checkbox({
           as={Check}
           size={12}
           strokeWidth={Platform.OS === 'web' ? 2.5 : 3.5}
-          className={cn('text-primary-foreground', iconClassName)}
         />
       </Indicator>
     </Root>

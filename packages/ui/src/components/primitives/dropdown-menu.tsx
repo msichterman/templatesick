@@ -39,7 +39,6 @@ type DropdownMenuSubTriggerProps = DropdownMenuPrimitive.SubTriggerProps &
   React.RefAttributes<DropdownMenuPrimitive.SubTriggerRef> & {
     className?: string;
     children?: React.ReactNode;
-    iconClassName?: string;
     inset?: boolean;
   };
 
@@ -47,7 +46,6 @@ function DropdownMenuSubTrigger({
   className,
   inset,
   children,
-  iconClassName,
   ...props
 }: DropdownMenuSubTriggerProps) {
   const { open } = DropdownMenuPrimitive.useSubContext();
@@ -70,7 +68,7 @@ function DropdownMenuSubTrigger({
         )}
         {...props}>
         <>{children}</>
-        <Icon as={icon} className={cn('text-foreground ml-auto size-4 shrink-0', iconClassName)} />
+        <Icon as={icon} size={16} />
       </SubTrigger>
     </TextClassContext.Provider>
   );
@@ -214,13 +212,7 @@ function DropdownMenuCheckboxItem({ className, children, ...props }: DropdownMen
         {...props}>
         <View className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
           <DropdownMenuPrimitive.ItemIndicator>
-            <Icon
-              as={Check}
-              className={cn(
-                'text-foreground size-4',
-                Platform.select({ web: 'pointer-events-none' })
-              )}
-            />
+            <Icon as={Check} size={16} />
           </DropdownMenuPrimitive.ItemIndicator>
         </View>
         <>{children}</>

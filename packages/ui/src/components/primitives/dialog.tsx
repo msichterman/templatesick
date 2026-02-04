@@ -86,10 +86,7 @@ function DialogContent({ className, portalHost, children, ...props }: DialogCont
               })
             )}
             hitSlop={12}>
-            <Icon
-              as={X}
-              className={cn('text-accent-foreground web:pointer-events-none size-4 shrink-0')}
-            />
+            <Icon as={X} size={16} />
             <Text className="sr-only">Close</Text>
           </Close>
         </Content>

@@ -4,9 +4,11 @@ const path = require('path');
 
 const backendEnvPath = path.join(__dirname, '.env.local');
 const nativeEnvPath = path.join(__dirname, '../../apps/native/.env.local');
+const webEnvPath = path.join(__dirname, '../../apps/web/.env.local');
 
 if (!fs.existsSync(backendEnvPath)) {
-  console.log('No backend .env.local found. Run `convex dev` first.');
+  console.warn('⚠️  No backend .env.local found. Run `pnpm setup` or `convex dev` first.');
+  console.warn('   Apps will not have CONVEX_URL configured.');
   process.exit(0);
 }
 
@@ -19,7 +21,15 @@ if (!convexUrlMatch) {
 }
 
 const convexUrl = convexUrlMatch[1].trim();
-const nativeEnvContent = `EXPO_PUBLIC_CONVEX_URL=${convexUrl}\n`;
 
+// Sync to native app
+const nativeEnvContent = `EXPO_PUBLIC_CONVEX_URL=${convexUrl}\n`;
 fs.writeFileSync(nativeEnvPath, nativeEnvContent);
-console.log(`Synced EXPO_PUBLIC_CONVEX_URL to apps/native/.env.local`);
+console.log(`✓ Synced EXPO_PUBLIC_CONVEX_URL to apps/native/.env.local`);
+
+// Sync to web app
+const webEnvContent = `NEXT_PUBLIC_CONVEX_URL=${convexUrl}\n`;
+fs.writeFileSync(webEnvPath, webEnvContent);
+console.log(`✓ Synced NEXT_PUBLIC_CONVEX_URL to apps/web/.env.local`);
+
+console.log(`  ${convexUrl}`);

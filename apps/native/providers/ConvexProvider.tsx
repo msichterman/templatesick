@@ -4,10 +4,19 @@ import { Platform } from "react-native";
 import { ReactNode } from "react";
 import * as SecureStore from "expo-secure-store";
 
-const convex = new ConvexReactClient(
-  process.env.EXPO_PUBLIC_CONVEX_URL!,
-  { unsavedChangesWarning: false, verbose: true }
-);
+const convexUrl = process.env.EXPO_PUBLIC_CONVEX_URL;
+
+if (!convexUrl) {
+  throw new Error(
+    "Missing EXPO_PUBLIC_CONVEX_URL environment variable.\n" +
+    "Run `pnpm setup` to initialize Convex, or `pnpm sync-env` if you've already set up Convex."
+  );
+}
+
+const convex = new ConvexReactClient(convexUrl, {
+  unsavedChangesWarning: false,
+  verbose: true,
+});
 
 // Storage adapter for native using expo-secure-store
 const nativeStorage = {

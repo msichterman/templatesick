@@ -57,7 +57,7 @@ function SelectTrigger({ className, children, size = 'default', ...props }: Sele
       )}
       {...props}>
       <>{children}</>
-      <Icon as={ChevronDown} aria-hidden={true} className="text-muted-foreground size-4" />
+      <Icon as={ChevronDown} aria-hidden={true} size={16} />
     </Trigger>
   );
 }
@@ -159,7 +159,7 @@ function SelectItem({ className, children, ...props }: SelectItemProps) {
       {...props}>
       <View className="absolute right-2 flex size-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <Icon as={Check} className="text-muted-foreground size-4 shrink-0" />
+          <Icon as={Check} size={16} />
         </SelectPrimitive.ItemIndicator>
       </View>
       <ItemText className="text-foreground group-active:text-accent-foreground select-none text-sm" />
@@ -196,7 +196,7 @@ function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps
     <ScrollUpBtn
       className={cn('flex cursor-default items-center justify-center py-1', className)}
       {...props}>
-      <Icon as={ChevronUpIcon} className="size-4" />
+      <Icon as={ChevronUpIcon} size={16} />
     </ScrollUpBtn>
   );
 }
@@ -215,7 +215,7 @@ function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonP
     <ScrollDownBtn
       className={cn('flex cursor-default items-center justify-center py-1', className)}
       {...props}>
-      <Icon as={ChevronDownIcon} className="size-4" />
+      <Icon as={ChevronDownIcon} size={16} />
     </ScrollDownBtn>
   );
 }

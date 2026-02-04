@@ -31,4 +31,4 @@ config.resolver.blockList = [
   /packages\/ui\/dist\/.*/,
 ];
 
-module.exports = withNativeWind(config);
+module.exports = withNativeWind(config, { input: './global.css' });

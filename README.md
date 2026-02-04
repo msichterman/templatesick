@@ -8,7 +8,7 @@ A full-stack monorepo template for building cross-platform apps with **Expo**, *
 - **[Expo SDK 54](https://expo.dev/)** - React Native framework for iOS, Android, and web
 - **[Next.js 15](https://nextjs.org/)** - React framework for the web app
 - **[Tailwind CSS v4](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[NativeWind](https://www.nativewind.dev/)** - Tailwind CSS for React Native
+- **[NativeWind v5](https://www.nativewind.dev/)** - Tailwind CSS for React Native (pre-release for Tailwind v4 support)
 - **[React Native Reusables](https://rnr-docs.vercel.app/)** - Accessible UI components via `@rn-primitives/*`
 - **[Convex](https://convex.dev/)** - Real-time backend with automatic sync
 - **[Convex Auth](https://labs.convex.dev/auth)** - Authentication for Convex
