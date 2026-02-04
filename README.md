@@ -30,17 +30,18 @@ A full-stack monorepo template for building cross-platform apps with **Expo**, *
    pnpm install
    ```
 
-3. **Set up Convex**
+3. **Set up Convex** (creates project and syncs env to native app)
    ```sh
-   cd packages/backend
-   npx convex dev
+   pnpm setup
    ```
-   This will prompt you to create a new Convex project and set up your environment.
+   This will prompt you to create a new Convex project and automatically sync the `EXPO_PUBLIC_CONVEX_URL` to the native app.
 
 4. **Start development**
    ```sh
    pnpm dev
    ```
+
+> **Note:** If you need to re-sync environment variables after running `convex dev` manually, run `pnpm sync-env`.
 
 ## Project Structure
 
@@ -72,8 +73,10 @@ A full-stack monorepo template for building cross-platform apps with **Expo**, *
 ## Scripts
 
 ```sh
+pnpm setup      # Set up Convex and sync env vars to native app
 pnpm dev        # Start all apps in development mode
 pnpm build      # Build all apps
+pnpm sync-env   # Sync Convex URL from backend to native app
 pnpm clean      # Clean build artifacts and node_modules
 pnpm format     # Format code with Prettier
 ```
